@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles/style.css">
+    
+    <link rel="shortcut icon" href="/assets/favicon.png" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+    integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <title>Tempnow - Previsão do Tempo</title>
+</head>
+<body>
+    <header>
+        <img src="./assets/logo.png" alt="">
+    </header>
+
+    <main>
+        <div class="form">
+            <h3>Confira a previsão para a cidade:</h3>
+            <div class="form-input-container"> 
+                <input placeholder="Digite o nome da cidade" id="city-input" type="text"> 
+                <i id="search" class="fa-solid fa-magnifying-glass" style="color: #009dff;"></i>
+            </div>
+        </div>
+        <div id="weather-data" class="hide">
+            <h2>
+              <i class="fa-solid fa-location-dot"></i> 
+              <span id="city"></span> 
+            </h2>
+            <p id="temperature"><span></span>°C</p>
+            <div id="description-container">
+              <p id="description"></p>
+              <img id="weather-icon" src="" alt="Condições atuais"> 
+            </div>
+            <div id="details-container">
+              <p id="umidity"> <i class="fa-solid fa-droplet"></i> Umidade: <span></span>  </p>
+              <p id="wind"> <i class="fa-solid fa-wind"></i> Ventos: <span></span> </p>
+            </div>
+        </div>
+        <div id="error-message" class="hide">
+            <p>Não foi possível encontrar o clima deste local.</p>
+        </div>
+        <div id="loader" class="hide"> 
+            <i class="fa-sharp fa-solid fa-sun fa-spin fa-2xl" style="color: #009dff;"></i>
+        </div>
+        <div id="reloader" class="hide">&nbsp; 
+            <i class="fa-solid fa-rotate fa-2xl" id="reload" style="color: #009dff;"></i>
+        </div>
+    </main>
+
+        
+
+    <footer class="">
+        <div class="about-us-btns">
+            <div class="down-content">
+                <i class="fa-solid fa-arrow-down fa-2xl" style="color: #009dff;"></i>
+            </div>
+            <div class="up-content">
+                <h2>Sobre nós</h2>
+                <i class="fa-solid fa-arrow-up fa-xl" style="color: #009dff;"></i>
+            </div>
+        </div>
+        <div class="about-us-text">
+            <h3>Integrantes:</h3>
+            <ul class="students">
+                <li>
+                    Gustavo Pinheiro
+                    <div class="students-links">
+                        <a href="https://github.com/Gustavopnhro" target="_blank">
+                            <i class="fa-brands fa-github fa-xl"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/gustavoPinheirops" target="_blank">
+                            <i class="fa-brands fa-linkedin fa-xl" style="color: #009dff;"></i>
+                        </a>
+                    </div> 
+                </li>
+                <li>
+                    Diego Lopes
+                    <div class="students-links">
+                        <a href="https://github.com/Diegox0301" target="_blank">
+                            <i class="fa-brands fa-github fa-xl"></i>
+                        </a>
+                        <a href="" target="_blank">
+                            <i class="fa-brands fa-linkedin fa-xl" style="color: #009dff;"></i>
+                        </a>
+                    </div> 
+                </li>
+                <li>
+                    Amanda Amorim
+                    <div class="students-links">
+                        <a href="https://github.com/amandioca" target="_blank">
+                            <i class="fa-brands fa-github fa-xl"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/amandioca/" target="_blank">
+                            <i class="fa-brands fa-linkedin fa-xl" style="color: #009dff;"></i>
+                        </a>
+                    </div> 
+                </li>
+                <li>
+                    Nathalia Dumit
+                    <div class="students-links">
+                        <a href="https://www.linkedin.com/in/nathalia-dumit/" target="_blank">
+                            <i class="fa-brands fa-linkedin fa-xl" style="color: #009dff;"></i>
+                        </a>
+                    </div> 
+                </li>
+                <li>
+                    Rafael Alves
+                    <div class="students-links">
+                        <a href="https://github.com/rafaeldasfa" target="_blank">
+                            <i class="fa-brands fa-github fa-xl"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/rafaelsfa/" target="_blank">
+                            <i class="fa-brands fa-linkedin fa-xl" style="color: #009dff;"></i>
+                        </a>
+                    </div> 
+                </li>
+            </ul>
+            <p class="about"> Projeto de conclusão do módulo "Provisionamento como código", idealizado e realizado pela equipe 6 da turma #1099 de DevOps do programa "Vem Ser Tech" ministrado pela Ada Tech em parceria com o Ifood sob os ensinamentos dos excelentes professores do módulo.</p>
+            <ul class="teachers">
+                <li>
+                    <p>Renata Alves</p>
+                    <img src="https://media.licdn.com/dms/image/C4E03AQEIw7pn0DfvHA/profile-displayphoto-shrink_800_800/0/1653310096699?e=1715817600&v=beta&t=KAB2bHwsDKB1R9ymtIGYlAJCYIzNmLO8n46-MqIh0pM" alt="">
+                </li>
+                <li> 
+                    <p>André Ferreira</p>
+                    <img src="https://media.licdn.com/dms/image/D4D03AQHoQQyJr3cZfA/profile-displayphoto-shrink_800_800/0/1674254733028?e=1715817600&v=beta&t=nFHyRLm4VdRbv4odrvmkObTWYA6iGG2YCKWfC8umes0" alt="" srcset="">
+                </li>
+            </ul>
+            <div class="logomarcas">
+                <img src="https://i.imgur.com/LTnwRR7.jpg" alt="Header AdaTech e Potência Tech - iFood">
+            </div>
+        </div>
+    </footer>
+<script src="./scripts/script.js"></script>
+</body>
+</html>

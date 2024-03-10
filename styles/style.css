@@ -1,0 +1,266 @@
+* {
+    box-sizing: border-box;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Quicksand', 'Arial';
+}
+
+:root {
+    --background-color: #009dff;
+    --font-color: #040F16;
+    --white-background: #EBF5DF;
+    --second-white-background: #fff;
+}
+
+body {
+    background-color: var(--background-color);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+
+    background-image: 
+    url(../assets/downwaves.png),
+    url(../assets/topwaves.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom center, 50%, 50%;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0rem;
+}
+
+header img {
+    height: 10rem;
+    transition-duration: 500ms;
+}
+
+header img:hover {
+    transform: scale(1.09);
+
+}
+
+.hide {
+    display: none;
+}
+
+main {
+    background-color: var(--white-background);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: 15.rem;
+    color: var(--font-color);
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.form h3 {
+    margin-bottom: 1rem;
+}
+
+.form input {
+    width: 80%;
+    border-radius: 15px;
+    padding: 5px;
+    outline: none;
+    border: 2px solid var(--background-color);
+}
+
+.form input:focus{
+    outline: none;
+}
+
+.form-input-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#search {
+    margin-left: 10px;
+    cursor: pointer;
+    transition-duration: 300ms;
+}
+
+#search:hover {
+    transform: scale(1.2);
+}
+
+#loader {
+    padding: 1rem;
+}
+
+#weather-data {
+    background-color: var(--background-color);
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem 0rem;
+    border-radius: 15px;
+    border: 4px solid var(--second-white-background);
+
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+    color: var(--white-background);
+    text-align: center;
+}
+
+
+#reload {
+    padding: 2rem;    
+    cursor: pointer;
+    transition-duration: 500ms;
+}
+
+#reload:hover {
+    transform: rotate(90deg);
+}
+
+#error-message {
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+
+footer {
+    background-color: var(--white-background);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+
+    position: absolute;
+    bottom: 1px;
+    width: 100%;
+    height: 50px;
+
+    transition-duration: 800ms;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+
+}   
+
+
+footer i {
+    margin-left: 0.5rem;
+    cursor: pointer;
+
+}
+
+.about-us-btns{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 400ms;
+    position: relative;
+}
+
+.about-us-text {
+    padding: 0rem 4rem;
+    display: none;
+    opacity: 0;
+    flex-direction: column;
+    text-align: center ;
+
+}
+
+
+.up-content {
+    color: var(--background-color);
+    display: flex;
+    align-items: center;
+    transition-duration: 300ms;
+    cursor: pointer;
+}
+
+.down-content {
+    color: var(--background-color);
+    align-items: center;
+    transition-duration: 300ms;
+    display: none;
+    cursor: pointer;
+    position: relative;
+    bottom: 2rem;
+}
+
+.down-content:hover, .up-content {
+    transform: scale(1.2);
+}
+
+.teachers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.teachers li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 1rem 2rem 0 0;
+    font-weight: bold;
+    color: var(--background-color);
+}
+
+.teachers li img {
+    margin-top: 0.5rem;
+    height: 90px;
+    border-radius: 100%;
+    border: 5px solid var(--background-color);
+}
+
+.students{
+    display: flex;
+    justify-content: center;
+}
+
+.students li {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; 
+    
+    margin: 1rem 1rem;
+    padding: 0.5rem 2rem;
+
+    border: 3px solid var(--background-color);
+    border-radius: 15px;
+    background-color: var(--second-white-background);
+}
+
+.students-links {
+    margin-top: 0.5rem;
+
+}
+
+.students-links a {
+
+    margin-top: 1rem;
+    text-decoration: none;
+    color: var(--font-color);    
+}
+
+.about {
+    font-weight: 500;
+}
+
+.logomarcas {
+    background-color: var(--background-color);
+    width: 100vw;
+    position: relative;
+    top: 15%;
+    padding: 15px;
+}
