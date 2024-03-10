@@ -16,24 +16,48 @@ Resources:
   Ec2InstanceZoneB:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-0522fd24ece270621
+      ImageId: ami-0f403e3180720dd7e
       InstanceType: t2.micro
       KeyName: !Ref SshKey
       SubnetId: !Ref SecondSubnet
       SecurityGroupIds:
       - !Ref Ec2SecurityGroup
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install httpd -y
+          sudo yum install git -y
+          sudo systemctl enable httpd
+          sudo systemctl start httpd
+          cd /var/www/html
+          sudo git clone https://github.com/Gustavopnhro/ModuloFinal06_AdaTech
+          sudo mv ModuloFinal06_AdaTech/* .
+          sudo rm -rf ModuloFinal06_AdaTech
+
     DependsOn: [SshKey, Ec2SecurityGroup]
 
   Ec2InstanceZoneA:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-0522fd24ece270621
+      ImageId: ami-0f403e3180720dd7e
       InstanceType: t2.micro
       KeyName: !Ref SshKey
       SubnetId: !Ref FirstSubnet
       SecurityGroupIds:
       - !Ref Ec2SecurityGroup
-      
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install httpd -y
+          sudo yum install git -y
+          sudo systemctl enable httpd
+          sudo systemctl start httpd
+          cd /var/www/html
+          sudo git clone https://github.com/Gustavopnhro/ModuloFinal06_AdaTech
+          sudo mv ModuloFinal06_AdaTech/* .
+          sudo rm -rf ModuloFinal06_AdaTech
 
     DependsOn: [SshKey, Ec2SecurityGroup]
 
@@ -59,7 +83,7 @@ Resources:
     Properties:
       GroupDescription: Group for application load balancer
       VpcId: !Ref VpcId
-      GroupName: SGP-ALB
+      GroupName: ALB-SecurityGroup
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
@@ -89,9 +113,6 @@ Resources:
       Subnets:
         - !Ref FirstSubnet
         - !Ref SecondSubnet
-
-
-  
 
 
   MyLoadBalancerListener:
