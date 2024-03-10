@@ -1,0 +1,108 @@
+Description: App deploy template v0.1
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  FirstSubnet:
+    Type: AWS::EC2::Subnet::Id
+  SecondSubnet:
+    Type: AWS::EC2::Subnet::Id
+
+Resources:
+  SshKey:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: sshCreatedKey
+
+  Ec2InstanceZoneB:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: ami-0522fd24ece270621
+      InstanceType: t2.micro
+      KeyName: !Ref SshKey
+      SubnetId: !Ref SecondSubnet
+      SecurityGroupIds:
+      - !Ref Ec2SecurityGroup
+    DependsOn: [SshKey, Ec2SecurityGroup]
+
+  Ec2InstanceZoneA:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: ami-0522fd24ece270621
+      InstanceType: t2.micro
+      KeyName: !Ref SshKey
+      SubnetId: !Ref FirstSubnet
+      SecurityGroupIds:
+      - !Ref Ec2SecurityGroup
+      
+
+    DependsOn: [SshKey, Ec2SecurityGroup]
+
+
+  Ec2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allows HTTP and SSH for EC2
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      
+        
+  MySecurityGroupALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Group for application load balancer
+      VpcId: !Ref VpcId
+      GroupName: SGP-ALB
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+
+  MyLoadBalancerTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: "LoadBalancerTargetGroup"
+      Port: 80
+      Protocol: HTTP
+      HealthCheckPort: 80
+      VpcId: !Ref VpcId
+      TargetType: instance
+      Targets:
+      - Id: !Ref Ec2InstanceZoneA
+      - Id: !Ref Ec2InstanceZoneB
+
+
+  MyLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: "LoadBalancer"
+      SecurityGroups:
+        - !Ref MySecurityGroupALB
+      Subnets:
+        - !Ref FirstSubnet
+        - !Ref SecondSubnet
+
+
+  
+
+
+  MyLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+      - Type: forward
+        ForwardConfig:
+          TargetGroups:
+          - TargetGroupArn: !Ref MyLoadBalancerTargetGroup
+            Weight: 1
