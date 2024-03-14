@@ -16,51 +16,24 @@ Resources:
   Ec2InstanceZoneB:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-0f403e3180720dd7e
+      ImageId: ami-079ec053ebf9d8255
       InstanceType: t2.micro
       KeyName: !Ref SshKey
       SubnetId: !Ref SecondSubnet
       SecurityGroupIds:
       - !Ref Ec2SecurityGroup
-      UserData:
-        Fn::Base64: |
-          #!/bin/bash
-          sudo yum update -y
-          sudo yum install httpd -y
-          sudo yum install git -y
-          sudo systemctl enable httpd
-          sudo systemctl start httpd
-          cd /var/www/html
-          sudo git clone https://github.com/Gustavopnhro/ModuloFinal06_AdaTech
-          sudo mv ModuloFinal06_AdaTech/* .
-          sudo rm -rf ModuloFinal06_AdaTech
-
     DependsOn: [SshKey, Ec2SecurityGroup]
 
   Ec2InstanceZoneA:
     Type: 'AWS::EC2::Instance'
     Properties:
-      ImageId: ami-0f403e3180720dd7e
+      ImageId: ami-079ec053ebf9d8255
       InstanceType: t2.micro
       KeyName: !Ref SshKey
       SubnetId: !Ref FirstSubnet
       SecurityGroupIds:
       - !Ref Ec2SecurityGroup
-      UserData:
-        Fn::Base64: |
-          #!/bin/bash
-          sudo yum update -y
-          sudo yum install httpd -y
-          sudo yum install git -y
-          sudo systemctl enable httpd
-          sudo systemctl start httpd
-          cd /var/www/html
-          sudo git clone https://github.com/Gustavopnhro/ModuloFinal06_AdaTech
-          sudo mv ModuloFinal06_AdaTech/* .
-          sudo rm -rf ModuloFinal06_AdaTech
-
     DependsOn: [SshKey, Ec2SecurityGroup]
-
 
   Ec2SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -76,14 +49,13 @@ Resources:
         FromPort: 22
         ToPort: 22
         CidrIp: 0.0.0.0/0
-      
         
   MySecurityGroupALB:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Group for application load balancer
       VpcId: !Ref VpcId
-      GroupName: ALB-SecurityGroup
+      GroupName: SGP-ALB
       SecurityGroupIngress:
       - IpProtocol: tcp
         FromPort: 80
@@ -114,7 +86,6 @@ Resources:
         - !Ref FirstSubnet
         - !Ref SecondSubnet
 
-
   MyLoadBalancerListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -127,3 +98,129 @@ Resources:
           TargetGroups:
           - TargetGroupArn: !Ref MyLoadBalancerTargetGroup
             Weight: 1
+  MyASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: MyAutoScalingGroupName
+      TargetGroupARNs:
+        - !Ref MyLoadBalancerTargetGroup
+      LaunchTemplate: 
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      MaxSize: '4'
+      MinSize: '2'
+      DesiredCapacity: '2'
+      VPCZoneIdentifier:
+        - !Ref FirstSubnet
+        - !Ref SecondSubnet
+      MetricsCollection:
+        - Granularity: 1Minute
+          Metrics: 
+            - GroupMinSize
+            - GroupMaxSize
+      Tags: 
+        - Key: Name
+          Value: MyApp-instance
+          PropagateAtLaunch: true
+
+  MyLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplate
+      VersionDescription: MyApp Template Version 1
+      LaunchTemplateData:
+        ImageId: ami-079ec053ebf9d8255
+        InstanceType: t2.micro
+        KeyName: !Ref SshKey
+        SecurityGroupIds: 
+          - !Ref Ec2SecurityGroup
+
+  MyScalingPolicie:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AutoScalingGroupName: !Ref MyASG
+      PolicyType: TargetTrackingScaling
+      EstimatedInstanceWarmup: '10'
+      TargetTrackingConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ALBRequestCountPerTarget
+          ResourceLabel: !Join 
+            - '/' 
+            - - !GetAtt MyLoadBalancer.LoadBalancerFullName
+              - !GetAtt MyLoadBalancerTargetGroup.TargetGroupFullName
+        TargetValue: 1
+  
+  MySecurityGroupDB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: DB SecurityGroup
+      VpcId: !Ref VpcId
+      GroupName: SGP-DB
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 3306
+        ToPort: 3306
+        CidrIp: 172.31.0.0/16
+        
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    DependsOn: 
+      - MySecurityGroupDB
+    Properties:
+      DBInstanceIdentifier: myrdsid4project
+      DBInstanceClass: db.m5.large
+      DBName: bitnami_wordpress
+      Engine: mysql
+      MasterUserPassword: Ifood1099
+      MasterUsername: admin
+      PubliclyAccessible: false
+      AllocatedStorage: 20
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref MySecurityGroupDB
+  
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: groupf of subnets to RDS resource
+      DBSubnetGroupName: subnetGroup
+      SubnetIds:
+        - !Ref FirstSubnet
+        - !Ref SecondSubnet
+
+  MyEFS:
+    Type: AWS::EFS::FileSystem
+    Properties:
+      FileSystemTags:
+        - Key: Name
+          Value: EFSResource
+  MyMountTarget1:
+    Type: AWS::EFS::MountTarget
+    DependsOn:
+      - MySecurityGroupEFS
+    Properties:
+      FileSystemId: !Ref MyEFS
+      SubnetId: !Ref FirstSubnet
+      SecurityGroups: 
+        - !Ref MySecurityGroupEFS
+  MyMountTarget2:
+    Type: AWS::EFS::MountTarget
+    DependsOn:
+      - MySecurityGroupEFS
+    Properties:
+      FileSystemId: !Ref MyEFS
+      SubnetId: !Ref SecondSubnet
+      SecurityGroups: 
+        -  !Ref MySecurityGroupEFS
+
+  MySecurityGroupEFS:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EFS SecurityGroup
+      VpcId: !Ref VpcId
+      GroupName: SGP-EFS
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 2049
+        ToPort: 2049
+        CidrIp: 172.31.0.0/16
